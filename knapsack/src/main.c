@@ -12,6 +12,7 @@
 
 int main(int argc, char **argv) {
     /* 引数処理: ユーザ入力が正しくない場合は使い方を標準エラーに表示して終了 */
+    /* 引数が一つだったらファイルからの入力 二つだったら従来通り*/
     if (argc != 3) {
         fprintf(stderr, "usage: %s <the number of items (int)> <max capacity (double)>\n", argv[0]);
         exit(1);

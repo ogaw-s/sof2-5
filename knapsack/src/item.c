@@ -36,14 +36,13 @@ Itemset *init_itemset(size_t number, int seed) {
     return list;
 }
 
-
 /*
 バイナリ：
 品物数　size_t(8バイト)、 
 価値　品物数分double(8バイト)、
 重さ　品物数分double
 */
-Itemset *load_itemset(size_t number, int seed, char filename) {
+Itemset *load_itemset(char *filename) {
     FILE *fp;
     if ((fp = fopen(filename, "rb")) == NULL) {
         perror(filename);
@@ -53,10 +52,12 @@ Itemset *load_itemset(size_t number, int seed, char filename) {
     size_t rsize = fread(&item_num, sizeof(size_t), 1, fp);
     
     Itemset *list = (Itemset *)malloc(sizeof(Itemset));
-    Item *item = (Item *)malloc(sizeof(Item) * number);
+    Item *item = (Item *)malloc(sizeof(Item) * item_num);
 
     for (size_t i = 0; i < item_num; i++) {
         fread(&item[i].value, sizeof(double), 1, fp);
+    }
+    for (size_t i = 0; i < item_num; i++) {
         fread(&item[i].weight, sizeof(double), 1, fp);
     }
 

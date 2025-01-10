@@ -4,11 +4,9 @@
 typedef struct item Item;
 typedef struct itemset Itemset;
 
-
 // Itemsetを初期化し、そのポインタを返す関数
 // 乱数シードを第2引数にとる
 Itemset *init_itemset(size_t number, int seed);
-
 // Itemsetの動的確保された領域を解放する
 void free_itemset(Itemset *list);
 
