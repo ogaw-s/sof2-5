@@ -20,6 +20,7 @@ struct itemset {
     Item *item;
 };
 
+
 // 構造体をポインタで確保するお作法を確認してみよう
 Itemset *init_itemset(size_t number, int seed) {
     Itemset *list = (Itemset *)malloc(sizeof(Itemset));
@@ -32,6 +33,34 @@ Itemset *init_itemset(size_t number, int seed) {
         item[i].weight = 0.25 * (rand() % 200 + 1);
     }
     *list = (Itemset){.number = number, .item = item};
+    return list;
+}
+
+
+/*
+バイナリ：
+品物数　size_t(8バイト)、 
+価値　品物数分double(8バイト)、
+重さ　品物数分double
+*/
+Itemset *load_itemset(size_t number, int seed, char filename) {
+    FILE *fp;
+    if ((fp = fopen(filename, "rb")) == NULL) {
+        perror(filename);
+        return EXIT_FAILURE;
+    }
+    size_t item_num;
+    size_t rsize = fread(&item_num, sizeof(size_t), 1, fp);
+    
+    Itemset *list = (Itemset *)malloc(sizeof(Itemset));
+    Item *item = (Item *)malloc(sizeof(Item) * number);
+
+    for (size_t i = 0; i < item_num; i++) {
+        fread(&item[i].value, sizeof(double), 1, fp);
+        fread(&item[i].weight, sizeof(double), 1, fp);
+    }
+
+    fclose(fp);
     return list;
 }
 

@@ -1,4 +1,4 @@
 @echo off 
-echo git add .
-echo git commit -m "%0"
-echo git push
+git add .
+git commit -m "%0"
+git push
