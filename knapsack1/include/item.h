@@ -8,6 +8,9 @@ typedef struct itemset Itemset;
 // 乱数シードを第2引数にとる
 Itemset *init_itemset(size_t number, int seed);
 // Itemsetの動的確保された領域を解放する
+
+Itemset *load_itemset(char *filename);
+
 void free_itemset(Itemset *list);
 
 // Itemsetの内容を標準出力に表示する関数
@@ -24,9 +27,6 @@ double get_itemweight(const Item *item);
 
 // Item の Valueを取得
 double get_itemvalue(const Item *item);
-
-//ファイルからItemsetを設定 [未実装, 課題1] 
-Itemset *load_itemset(char *filename);
 
 //Itemsetのパラメータを記録したバイナリファイルを出力する関数 [未実装, テスト用]
 void save_itemset(char *filename);
