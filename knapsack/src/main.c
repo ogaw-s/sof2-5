@@ -13,26 +13,29 @@
 int main(int argc, char **argv) {
     /* 引数処理: ユーザ入力が正しくない場合は使い方を標準エラーに表示して終了 */
     /* 引数が一つだったらファイルからの入力 二つだったら従来通り*/
-    if (argc != 3) {
-        fprintf(stderr, "usage: %s <the number of items (int)> <max capacity (double)>\n", argv[0]);
-        exit(1);
-    }
-
-    // 個数の上限はあらかじめ定めておく
+    char filename;
     const int max_items = 100;
+    Itemset *items;
+    if (argc == 2) {
+        strcpy(filename, argv[1]);
+        items = load_itemset(filename);
 
-    const int n = load_int(argv[1]);
-    assert(n <= max_items);  // assert で止める
-    assert(n > 0);           // 0以下も抑止する
-
-    const double W = load_double(argv[2]);
-    assert(W >= 0.0);
-
+    }else if(argc == 3) {
+        const int n = load_int(argv[1]);
+        assert(n <= max_items);  // assert で止める
+        assert(n > 0);           // 0以下も抑止する
+        const double W = load_double(argv[2]);
+        assert(W >= 0.0);
+        // 乱数シードを1にして、初期化 (ここは変更可能)
+        int seed = 1;
+        items = init_itemset(n, seed);
+    }else {
+        fprintf(stderr, "usage: %s <the number of items (int)> <max capacity (double)>\n", argv[0]);
+        printf("       or <filename>\n");
+        exit(1);    
+    }
+    
     printf("max capacity: W = %.f, # of items: %d\n", W, n);
-
-    // 乱数シードを1にして、初期化 (ここは変更可能)
-    int seed = 1;
-    Itemset *items = init_itemset(n, seed);
     print_itemset(items);
 
     // ソルバーで解く

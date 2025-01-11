@@ -16,15 +16,22 @@ int main(int argc, char **argv) {
     FILE *fp;
     fp = fopen(argv[1], "wb");
     srand((unsigned int)time(NULL));
-    double v[3] = {0.25 * (rand() % 200),0.25 * (rand() % 200),0.25 * (rand() % 200)};
-    double w[3] = {0.25 * (rand() % 200),0.25 * (rand() % 200),0.25 * (rand() % 200)};
+    double v[3], w[3];
+    
+    for (int i = 0; i < 3; i++) {
+        v[i] = 0.25f * (rand() % 200);
+        w[i] = 0.25f * (rand() % 200);
+    }
+    
     size_t a = 3;
     fwrite(&a, sizeof(size_t),1,fp);
     for (int i = 0; i < 3; i++) {
         fwrite(&v[i], sizeof(double), 1, fp);
+        printf("%lf\n", v[i]);
     }
     for (int i = 0; i < 3; i++) {
         fwrite(&w[i], sizeof(double), 1, fp);
+        printf("%lf\n", w[i]);
     }
     fclose(fp);
 }
