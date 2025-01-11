@@ -46,12 +46,13 @@ Itemset *load_itemset(char *filename) {
     FILE *fp;
     if ((fp = fopen(filename, "rb")) == NULL) {
         perror(filename);
-        return EXIT_FAILURE;
+        return NULL;
     }
     size_t item_num;
-    size_t rsize = fread(&item_num, sizeof(size_t), 1, fp);
     
-    Itemset *list = (Itemset *)malloc(sizeof(Itemset));
+    fread(&item_num, sizeof(size_t), 1, fp);
+    printf("item num: %ld\n",item_num);
+    Itemset *list = (Itemset *)malloc(sizeof(Itemset) * item_num);
     Item *item = (Item *)malloc(sizeof(Item) * item_num);
 
     for (size_t i = 0; i < item_num; i++) {
@@ -60,6 +61,7 @@ Itemset *load_itemset(char *filename) {
     for (size_t i = 0; i < item_num; i++) {
         fread(&item[i].weight, sizeof(double), 1, fp);
     }
+    *list = (Itemset){.number = item_num, .item = item};
 
     fclose(fp);
     return list;
