@@ -68,20 +68,3 @@ Answer search(const City *city, int n, int *route, int *visited) {
 
     return min;
 }
-
-void init_random_route(int n, int *route){
-    for (int i = 0; i < n; i++) {
-        route[i] = i;
-    }
-    srand((unsigned)time(NULL));
-    int r1, r2;
-    for (int j = 0; j < 2 * n; j++) {
-        r1 = rand() % (n - 1) + 1; //1 ~ n-1までのランダム整数)
-        r2 = rand() % (n - 1) + 1;
-        int d1 = route[r1];
-        int d2 = route[r2];
-
-        route[r1] = d2;
-        route[r2] = d1;
-    }
-}

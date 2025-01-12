@@ -18,11 +18,11 @@ int main(int argc, char **argv) {
     Itemset *items;
     int n;
     double W;
-    if (argc == 2) {
-        //ここにWを設定するやつを実装！
-        strcpy(filename, argv[1]);
-        items = load_itemset(filename);
-    }else if(argc == 3) {
+    if (argc != 3){
+        fprintf(stderr, "usage: %s <the number of items (int)> <max capacity (double)>\n", argv[0]);
+        printf("       or <filename> <max capacity (double)>\n");
+        exit(1);
+    }else if (atoi(argv[1]) != 0) {
         n = load_int(argv[1]);
         assert(n <= max_items);  // assert で止める
         assert(n > 0);           // 0以下も抑止する
@@ -32,20 +32,25 @@ int main(int argc, char **argv) {
         int seed = 1;
         items = init_itemset(n, seed);
     }else {
-        fprintf(stderr, "usage: %s <the number of items (int)> <max capacity (double)>\n", argv[0]);
-        printf("       or <filename>\n");
-        exit(1);    
+        //ここにWを設定するやつを実装！
+        strcpy(filename, argv[1]);
+        W = atoi(argv[2]);
+        items = load_itemset(filename); 
     }
     
     printf("max capacity: W = %.f, # of items: %d\n", W, n);
     print_itemset(items);
 
     // ソルバーで解く
-    double total = solve(items, W);
+    Answer ans = solve(items, W);
 
     // 表示する
     printf("----\nbest solution:\n");
-    printf("value: %4.1f\n", total);
+    printf("value: %4.1f\n", ans.value);
+    for(int i = get_nitem(items)-1 ; i >=0 ;i--) {
+        printf("%d", (ans.flags & (1 << i))?1:0);
+    }
+    printf("\n");
 
     free_itemset(items);
     return 0;

@@ -1,11 +1,10 @@
-#include "solve.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "city.h"
 #include "map.h"
+#include "solve.h"
 
 double solve(const City *city, int n, int *route, int *visited) {
     route[0] = 0;  // 循環した結果を避けるため、常に0番目からスタート
@@ -19,25 +18,30 @@ double solve(const City *city, int n, int *route, int *visited) {
 }
 
 Answer search(const City *city, int n, int *route, int *visited) {
+    static double mindis = 10000000000;
     int start = 0;
-    // 訪問した個数を数える
+    double cum_dis = 0;
+    // 訪問した個数および訪問したところまでの累積距離を計算
+    int c0 = route[0];
     for (int i = 1; i < n; i++) {
         if (!route[i]) {
             start = i;
             break;
+        } else {
+            int c1 = route[i];
+            cum_dis += distance(get_city(city, c0), get_city(city, c1));
+            c0 = c1;
         }
     }
+
     // 全て訪問したケース（ここが再帰の終端条件）
     if (start == 0) {
-        double sum_d = 0;
-        for (int i = 0; i < n; i++) {
-            const int c0 = route[i];
-            const int c1 = route[(i + 1) % n];  // nは0に戻る
-            sum_d += distance(get_city(city, c0), get_city(city, c1));
-        }
+        // 個数カウント時に距離計算しているので簡略化可能
+        double sum_d =
+            cum_dis + distance(get_city(city, c0), get_city(city, 0));
         int *retarg = (int *)malloc(sizeof(int) * n);
         memcpy(retarg, route, sizeof(int) * n);
-
+        if (sum_d < mindis) mindis = sum_d;
         return (Answer){.dist = sum_d, .route = retarg};
     }
 
@@ -47,6 +51,11 @@ Answer search(const City *city, int n, int *route, int *visited) {
         // 未訪問なら訪れる
         if (!visited[i]) {
             if (i == 2 && !visited[1]) continue;  // 逆順の巡回経路を抑制
+            // ここまでの累積距離が現状の最小距離を超えていたら枝刈り
+            if (cum_dis + distance(get_city(city, route[start - 1]),
+                                   get_city(city, i)) >
+                mindis)
+                continue;
 
             route[start] = i;
             visited[i] = 1;
@@ -67,21 +76,4 @@ Answer search(const City *city, int n, int *route, int *visited) {
     }
 
     return min;
-}
-
-void init_random_route(int n, int *route){
-    for (int i = 0; i < n; i++) {
-        route[i] = i;
-    }
-    srand((unsigned)time(NULL));
-    int r1, r2;
-    for (int j = 0; j < 2 * n; j++) {
-        r1 = rand() % (n - 1) + 1; //1 ~ n-1までのランダム整数)
-        r2 = rand() % (n - 1) + 1;
-        int d1 = route[r1];
-        int d2 = route[r2];
-
-        route[r1] = d2;
-        route[r2] = d1;
-    }
 }
