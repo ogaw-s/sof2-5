@@ -8,53 +8,38 @@
 #include "map.h"
 #include "solve_climb.h"
 
-int main() {
+int main(int argc, char**argv) {
     srand((unsigned int)time(NULL));
+    const int width = 70;
+    const int height = 40;
+    const int max_cities = 100;
+    
+    Map *map = init_map(width, height);
+    
+    if (argc != 2){
+        fprintf(stderr, "Usage: %s <city file>\n", argv[0]);
+        exit(1);
+    }
     int n = 1;
-    City *city1 = load_cities("data/city20seed1.dat",&n);
-    City *city2 = load_cities("data/city20seed10.dat",&n);
-    City *city3 = load_cities("data/city20seed100.dat",&n);
-    int *route = (int*)calloc(n, sizeof(int));
-    int counter = 0;
-    for (int i = 1; i < 500; i++) {
-        counter = 0;
-        i += 4;
-        for (int j = 0; j < 50; j++) {
-            const double d = solve(city1,n,route,i);
-            if (d < 129.96) {
-                counter++;
-            }
-        }
-        printf("%d, %lf\n", i, (double) counter/50);
-    }
-    for (int i = 1; i < 500; i++) {
-        counter = 0;
-        i += 4;
-        for (int j = 0; j < 50; j++) {
-            const double d = solve(city2,n,route,i);
-            if (d < 158.8) {
-                counter++;
-            }
-        }
-        printf("%d, %lf\n", i, (double) counter/50);
-    }
-    for (int i = 1; i < 500; i++) {
-        counter = 0;
-        i += 4;
-        for (int j = 0; j < 50; j++) {
-            const double d = solve(city3,n,route,i);
-            if (d < 128.99) {
-                counter++;
-            }
-        }
-        printf("%d, %lf\n", i, (double) counter/50);
-    }
-
-    free(route);
-
-    return 0;
-}
-
-
+    
+    City *city = load_cities(argv[1],&n);
+    assert( n > 1 && n <= max_cities);
 
     
+    plot_cities(map, city, n, NULL);
+    sleep(1);
+    
+    int *route = (int*)calloc(n, sizeof(int));
+    const double d = solve(city,n,route,50);
+    plot_cities(map, city, n, route);
+    printf("total distance = %f\n", d);
+    for (int i = 0 ; i < n ; i++){
+	    printf("%d -> ", route[i]);
+    }
+    printf("0\n");
+    
+    free(route);
+    free(city);
+    
+    return 0;
+}
